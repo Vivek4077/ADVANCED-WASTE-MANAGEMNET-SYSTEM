@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Waste Management Dashboard</title>
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <!-- Link to your local stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="p-6 md:p-8">
+    <div class="max-w-screen-2xl mx-auto card rounded-2xl shadow-xl p-6 md:p-8">
+        <!-- Header Section -->
+        <header class="mb-8 border-b-2 border-dynamic pb-4 flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold main-header">Advanced Waste Dashboard</h1>
+                <p class="subtext mt-2">Analytics, ML Simulation, and Real-time Monitoring.</p>
+            </div>
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                    <svg id="theme-icon" class="w-6 h-6 text-gray-800 dark:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+                <button id="conveyor-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105" disabled>START</button>
+                <button id="fault-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-full shadow-lg transition duration-300" disabled>SIMULATE FAULT</button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Controls & Live Status -->
+            <div class="lg:col-span-1 space-y-6">
+                 <div class="card rounded-xl p-6 shadow-md border-l-4 border-purple-500">
+                    <h2 class="text-xl font-semibold main-header">System Control</h2>
+                    <p id="system-status-text" class="subtext text-sm mt-1 mb-4">Authenticating...</p>
+                    <div class="flex items-center space-x-2">
+                        <span id="status-light" class="w-4 h-4 rounded-full bg-gray-400"></span>
+                        <p id="current-item" class="font-semibold">-</p>
+                    </div>
+                </div>
+                <div class="card rounded-xl p-6 shadow-md border-l-4 border-teal-500">
+                    <h2 class="text-xl font-semibold main-header mb-2">IR Sensor Check</h2>
+                    <p class="subtext text-sm">Initial material pre-sort</p>
+                    <div id="ir-output" class="text-center mt-4 p-4 info-card rounded-lg">
+                        <p class="text-3xl font-bold text-teal-800 dark:text-teal-300">-</p>
+                    </div>
+                </div>
+                <div class="card rounded-xl p-6 shadow-md border-l-4 border-blue-500">
+                    <h2 class="text-xl font-semibold main-header mb-2">ML Classification</h2>
+                    <p class="subtext text-sm">Camera-based model prediction</p>
+                    <div id="ml-output" class="text-center mt-4 p-4 info-card rounded-lg">
+                        <p class="text-3xl font-bold text-blue-800 dark:text-blue-300">-</p>
+                        <p class="text-sm text-blue-600 dark:text-blue-400">Confidence: -%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Data Visualizations -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <h2 class="text-2xl font-bold main-header">Analytics</h2>
+                    <div class="flex space-x-1 p-1 bg-gray-200 dark:bg-gray-700 rounded-full">
+                        <button data-filter="300" class="time-filter-btn text-xs font-semibold py-1 px-3 rounded-full">5 Mins</button>
+                        <button data-filter="3600" class="time-filter-btn text-xs font-semibold py-1 px-3 rounded-full">1 Hr</button>
+                        <button data-filter="43200" class="time-filter-btn text-xs font-semibold py-1 px-3 rounded-full">12 Hr</button>
+                        <button data-filter="86400" class="time-filter-btn text-xs font-semibold py-1 px-3 rounded-full">1 Day</button>
+                        <button data-filter="all" class="time-filter-btn bg-white dark:bg-slate-900 text-xs font-semibold py-1 px-3 rounded-full">All Time</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="card rounded-xl p-6 shadow-md h-64"><canvas id="categoryBreakdownChart"></canvas></div>
+                    <div class="card rounded-xl p-6 shadow-md h-64"><canvas id="wasteBreakdownChart"></canvas></div>
+                    <div class="card rounded-xl p-6 shadow-md h-64 md:col-span-2 lg:col-span-1"><canvas id="recycledTypeChart"></canvas></div>
+                </div>
+                <div class="card rounded-xl p-6 shadow-md h-72"><canvas id="processingTrendChart"></canvas></div>
+            </div>
+        </div>
+        
+        <!-- Sensor Belt Section -->
+        <section class="mt-8">
+            <h2 class="text-2xl font-bold main-header mb-4">Conveyor Belt Checkpoints</h2>
+            <div id="conveyor-belt" class="relative grid grid-cols-8 gap-2 p-4 bg-gray-800 rounded-xl shadow-inner">
+                 <div id="conveyor-item"></div>
+                 <div id="sensor-stage-0" class="bg-gray-700 text-white rounded-lg p-2 text-center z-10 text-xs md:text-sm"><h3 class="font-bold">Organic</h3><div class="sensor-light w-6 h-6 md:w-8 md:h-8 mx-auto rounded-full bg-gray-500 mt-2"></div></div>
+                 <div id="sensor-stage-1" class="bg-gray-700 text-white rounded-lg p-2 text-center z-10 text-xs md:text-sm"><h3 class="font-bold">Plastic</h3><div class="sensor-light w-6 h-6 md:w-8 md:h-8 mx-auto rounded-full bg-gray-500 mt-2"></div></div>
+                 <div id="sensor-stage-2" class="bg-gray-700 text-white rounded-lg p-2 text-center z-10 text-xs md:text-sm"><h3 class="font-bold">Paper</h3><div class="sensor-light w-6 h-6 md:w-8 md:h-8 mx-auto rounded-full bg-gray-500 mt-2"></div></div>
+                 <div id="sensor-stage-3" class="bg-gray-700 text-white rounded-lg p-2 text-center z-10 text-xs md:text-sm"><h3 class="font-bold">Metal</h3><div class="sensor-light w-6 h-6 md:w-8 md:h-8 mx-auto rounded-full bg-gray-500 mt-2"></div></div>
+                 <div id="sensor-stage-4" class="bg-gray-700 text-white rounded-lg p-2 text-center z-10 text-xs md:text-sm"><h3 class="font-bold">Glass</h3><div class="sensor-light w-6 h-6 md:w-8 md:h-8 mx-auto rounded-full bg-gray-500 mt-2"></div></div>
+                 <div id="sensor-stage-5" class="bg-gray-700 text-white rounded-lg p-2 text-center z-10 text-xs md:text-sm"><h3 class="font-bold">Cardboard</h3><div class="sensor-light w-6 h-6 md:w-8 md:h-8 mx-auto rounded-full bg-gray-500 mt-2"></div></div>
+                 <div id="sensor-stage-6" class="bg-gray-700 text-white rounded-lg p-2 text-center z-10 text-xs md:text-sm"><h3 class="font-bold">E-Waste</h3><div class="sensor-light w-6 h-6 md:w-8 md:h-8 mx-auto rounded-full bg-gray-500 mt-2"></div></div>
+                 <div id="manual-inspection-stage" class="bg-gray-700 text-white rounded-lg p-2 text-center border-2 border-dashed border-yellow-400 z-10 text-xs md:text-sm"><h3 class="font-bold">End of Line</h3><div class="sensor-light w-6 h-6 md:w-8 md:h-8 mx-auto rounded-full bg-gray-500 mt-2"></div></div>
+            </div>
+        </section>
+
+        <!-- Log Section -->
+         <section class="mt-8">
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+                <h2 class="text-2xl font-bold main-header">Event Log</h2>
+                <div class="flex items-center gap-4">
+                     <p id="accuracy-metric" class="text-lg subtext">Accuracy: <span class="font-bold main-header">0%</span></p>
+                     <p id="throughput-metric" class="text-lg subtext">Throughput: <span class="font-bold main-header">0.0</span> items/min</p>
+                    <button id="clear-log-btn" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 px-4 rounded-full text-sm">Clear Log</button>
+                </div>
+            </div>
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 shadow-inner h-64 overflow-y-auto">
+                <ul id="log-list" class="space-y-2"></ul>
+            </div>
+        </section>
+    </div>
+
+    <!-- Link to your local JavaScript file -->
+    <script type="module" src="script.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,75 @@
+:root {
+    --bg-color: #f8fafc; /* Lighter Gray */
+    --card-bg-color: #ffffff; /* White */
+    --text-color: #0f172a; /* Darker Slate */
+    --subtext-color: #64748b; /* Medium Slate */
+    --border-color: #e2e8f0; /* Light Gray Border */
+    --header-color: #020617; /* Nearly Black */
+    --info-card-bg: #f1f5f9;
+}
+
+html.dark {
+    --bg-color: #0f172a; /* Darker Blue-Gray */
+    --card-bg-color: #1e2h3b; /* Lighter Dark Blue-Gray */
+    --text-color: #f8fafc; /* Almost White */
+    --subtext-color: #cbd5e1; /* Lighter Gray Text */
+    --border-color: #475569; /* Medium Dark Gray Border */
+    --header-color: #ffffff; /* White */
+    --info-card-bg: #334155;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.card {
+    background-color: var(--card-bg-color);
+    transition: background-color 0.3s;
+}
+
+.info-card {
+    background-color: var(--info-card-bg);
+}
+
+.main-header { color: var(--header-color); }
+.subtext { color: var(--subtext-color); }
+.border-dynamic { border-color: var(--border-color); }
+
+.sensor-light { transition: background-color 0.3s ease-in-out; }
+
+#conveyor-item {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    background-color: #3b82f6;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: left 4.5s linear, opacity 0.3s;
+}
+
+#conveyor-item.active {
+    opacity: 1;
+    left: 97%;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* High contrast for inactive filter buttons */
+.time-filter-btn:not(.bg-white) {
+    color: #0f172a; /* Darker Slate for light theme */
+}
+html.dark .time-filter-btn:not(.dark\\:bg-slate-900) {
+     color: #f8fafc; /* Lighter Slate for dark theme */
+}
+
+
+
